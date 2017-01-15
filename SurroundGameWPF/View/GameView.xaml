@@ -1,0 +1,150 @@
+﻿<Window x:Class="SurroundGameWPF.View.GameView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SurroundGameWPF.View"
+        Title="Surround Game" Background="WhiteSmoke" MouseDown="GameWindow_PreviewMouseDown" ResizeMode="CanResize" Name="GameWindow"
+        PreviewMouseRightButtonDown="GameWindow_PreviewMouseRightButtonDown" WindowStyle="None"
+         MinHeight="430" MinWidth="{Binding minimumWidth}" >
+
+    <Window.Resources>
+        <local:PointDifferenceConverter x:Key="PointDifferenceConverter"></local:PointDifferenceConverter>
+        <local:PlayerToColorConverter x:Key="PlayerToColorConverter"></local:PlayerToColorConverter>
+        <local:PlayerToFieldColorConverter x:Key="PlayerToFieldColorConverter"></local:PlayerToFieldColorConverter>
+        <Style x:Key="MyButtonStyle" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" 
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            CornerRadius="0" 
+                            Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="Black" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="FieldButtonStyle" TargetType="Button" BasedOn="{StaticResource MyButtonStyle}">
+            <Setter Property="BorderBrush" Value="DarkGray"></Setter>
+            <Setter Property="BorderThickness" Value="1"></Setter>
+        </Style>
+    </Window.Resources>
+    <Border BorderBrush="{Binding ActiveColor}" BorderThickness="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid Name="WindowGrid">
+            <Grid Name="GameGrid">
+                <Grid.Triggers>
+                </Grid.Triggers>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="130"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Border BorderThickness="0,0,3,0" BorderBrush="{Binding ActiveColor}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid Name="UIGrid" Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="60"></RowDefinition>
+                            <RowDefinition Height="60"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid Background="AliceBlue" Grid.Row="1" Width="60" Height="30" RenderTransformOrigin="0.5,0.5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource FieldButtonStyle}" Background="{Binding ActiveColor, Mode=OneWay}" IsEnabled="False" >
+                            </Button>
+                            <Button Grid.Column="1"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource FieldButtonStyle}" Background="{Binding ActiveColor, Mode=OneWay}" IsEnabled="False" >
+                            </Button>
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsBrickHorizontal, Mode=OneWay}"
+                             Value="True">
+                                            <Setter Property="RenderTransform">
+                                                <Setter.Value>
+                                                    <RotateTransform Angle="0"/>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsBrickHorizontal, Mode=OneWay}"
+                             Value="False">
+                                            <Setter Property="RenderTransform">
+                                                <Setter.Value>
+                                                    <RotateTransform Angle="90"/>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
+                        </Grid>
+                        <Grid Grid.Row="2" Background="{Binding ActiveFieldColor}">
+                            <Button Style="{StaticResource FieldButtonStyle}" BorderThickness="2" Background="Lavender"  Width="50" Height="35" HorizontalAlignment="Left" Margin="7,0,0,0" Command="{Binding ButtonPress}" CommandParameter="CONFIRM" FontWeight="ExtraBold">Ok</Button>
+                            <Button Style="{StaticResource FieldButtonStyle}" BorderThickness="2" Background="Lavender" Width="50" Height="35" HorizontalAlignment="Right" Margin="0,0,7,0" Command="{Binding ButtonPress}" CommandParameter="ROTATE" FontWeight="ExtraBold">Rotate
+                            </Button>
+                        </Grid>
+                        <ItemsControl Grid.Row="0" ItemsSource="{Binding Players}" Width="120" Height="{Binding PlayerNumber}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical" FlowDirection="LeftToRight" Margin="0,60,0,0" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Width="120" Height="40" Background="{Binding Name, Converter={StaticResource PlayerToFieldColorConverter}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="50"></ColumnDefinition>
+                                            <ColumnDefinition Width="30"></ColumnDefinition>
+                                            <ColumnDefinition Width="40"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Name}" FontWeight="Bold" HorizontalAlignment="Left" Foreground="{Binding Name, Converter={StaticResource PlayerToColorConverter}}"></TextBlock>
+                                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding Points}" HorizontalAlignment="Center"></TextBlock>
+                                        <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" FontStyle="Italic" Text="{Binding PointsDifference, Converter={StaticResource PointDifferenceConverter}}" >
+
+                                        </TextBlock>
+                                        <Label></Label>
+                                    </Grid>
+
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </Border>
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Button Name="BackToMenu" Width="100" Grid.Row="0" Style="{StaticResource FieldButtonStyle}" Background="AliceBlue"  HorizontalAlignment="Right" VerticalAlignment="Top"  Height="50" Command="{Binding ButtonPress}" CommandParameter="EXIT">
+                        <Label FontWeight="ExtraBold">Quit to Main</Label>
+                    </Button>
+                    <Viewbox Grid.Row="1">
+                        <ItemsControl ItemsSource="{Binding Fields}" Width="{Binding FieldWidth}" Height="{Binding FieldHeight}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel FlowDirection="LeftToRight" ItemHeight="{Binding ButtonSize}" ItemWidth="{Binding ButtonSize}"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding FieldCommand}" Foreground="{Binding Color}"  CommandParameter="{Binding}"  Background="{Binding Color}" Style="{StaticResource FieldButtonStyle}" Focusable="False">
+                                    </Button>
+
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Viewbox>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

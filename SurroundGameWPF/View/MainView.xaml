@@ -1,0 +1,56 @@
+﻿<Window x:Class="SurroundGameWPF.View.MainView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:local="clr-namespace:SurroundGameWPF"
+        mc:Ignorable="d"
+        Title="Surrond Game - Main Menu" Height="220" Width="280" ResizeMode="NoResize" WindowStyle="SingleBorderWindow" MouseDown="window_MouseDown" Visibility="{Binding WindowVisibility}">
+    <Grid Name="MainGrid" Focusable="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="Surround Game" HorizontalAlignment="Center" FontFamily="Impact" FontSize="25"></TextBlock>
+        <Grid x:Name="CommandGrid"  Focusable="True" Grid.Row="1" Margin="5,0,5,0" HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+            </Grid.RowDefinitions>
+            <TextBlock Text="Row count" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
+            <TextBox x:Name="RowCountTextBox" Text="{Binding RowCount}"  MaxLength="2"  Width="20" Height="20" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,20,0"></TextBox>
+            <TextBlock Text="Column count" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
+            <TextBox x:Name="ColumnCountTextBox" MaxLength="2" Text="{Binding ColumnCount}" Width="20" Height="20" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,20,0">
+                <TextBox.Style>
+                    <Style TargetType="TextBox">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsEqualRowColumn}" Value="True">
+                                <Setter Property="IsEnabled" Value="False"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsEqualRowColumn}" Value="False">
+                                <Setter Property="IsEnabled" Value="True"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+            <Button Grid.Column="0" Grid.Row="2" Command="{Binding ButtonCommand}" CommandParameter="NewGame" HorizontalAlignment="Stretch" Height="20" VerticalAlignment="Center" Name="NewGameButton">
+                <Label HorizontalAlignment="Stretch" Height="30" FontSize="13" VerticalAlignment="Top" Margin="0,-8,0,0">New Game</Label>
+            </Button>
+            <Button Grid.Column="0" Grid.Row="3" HorizontalAlignment="Stretch" Height="20" VerticalAlignment="Center" Name="LoadGameButton" Command="{Binding ButtonCommand}" CommandParameter="LoadGame"  >
+                <Label HorizontalAlignment="Stretch" Height="30" FontSize="13" VerticalAlignment="Top" Margin="0,-8,0,0">Load Game</Label>
+            </Button>
+            <TextBlock Grid.Column="1" Grid.Row="0" Text="Equal rows/columns" VerticalAlignment="Center" Margin="26,8,0,7"/>
+            <CheckBox x:Name="IsEqualCheckBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding IsEqualRowColumn}"></CheckBox>
+            <TextBlock Grid.Column="1" Grid.Row="1" Text="# of Players" VerticalAlignment="Center"></TextBlock>
+            <TextBox x:Name="PlayerCountTextBox" Grid.Column="1" Grid.Row="1" MaxLength="1" Text="{Binding PlayerCount}" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,0,40,0"></TextBox>
+        </Grid>
+    </Grid>
+</Window>
